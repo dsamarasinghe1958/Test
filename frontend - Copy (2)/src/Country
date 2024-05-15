@@ -1,0 +1,15 @@
+import React from 'react'
+
+// deconstructed props
+function Country({country:{csem_id, csem_country_code, csem_country_name} }) {
+
+  return (
+        <tr key={csem_id}>
+            <td>{csem_id}</td>
+            <td>{csem_country_code}</td>
+            <td>{csem_country_name}</td>
+            <td><button>Edit</button></td>
+        </tr>
+  )
+}
+export default Country
