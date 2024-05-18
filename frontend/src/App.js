@@ -1,11 +1,18 @@
 import "./App.css";
 import axios from "axios";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
-import Upload_Profile_Private from './local-upload/Upload_Profile_Private';
-import Upload_Profile_Public from './local-upload/Upload_Profile_Public';
-import Upload from './local-upload/Upload';
-const URL = "http://localhost:3000";
+import Upload_Profile_Private from "./Components/Upload_Profile_Private";
+import Upload_Profile_Public from "./Components/Upload_Profile_Public";
+import ReactNotification from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import vedeio1 from './assets/videos/204306-923909642_small.mp4';
+import Login from './page/Login';
+//import Register from './Page/Register';
+//import PersonalInfo from './Page/PersonalInfo';
+//import Profile from './Profile';
+const URL = "http://localhost:3001";
 function App() {
   const [data, setData] = useState([]);
   const [inputValue, setInputValue] = useState("");
@@ -27,7 +34,6 @@ function App() {
     }
   };
 
-
   const fetchDataPublic = async () => {
     try {
       const response = await axios.get(URL + "/userGetPublic");
@@ -42,7 +48,9 @@ function App() {
 
   const postData = async () => {
     try {
-      const response = await axios.post(URL + "/userPostPrivate", { data: inputValue });
+      const response = await axios.post(URL + "/userPostPrivate", {
+        data: inputValue,
+      });
       console.log(response.data);
       fetchData(); // Fetch data again after posting
     } catch (error) {
@@ -51,7 +59,9 @@ function App() {
   };
   const postPublicData = async () => {
     try {
-      const response = await axios.post(URL + "/userPostPublic", { data: inputValue });
+      const response = await axios.post(URL + "/userPostPublic", {
+        data: inputValue,
+      });
       console.log(response.data);
       fetchDataPublic(); // Fetch data again after posting
     } catch (error) {
@@ -62,11 +72,11 @@ function App() {
     InputFirstName: "",
     InputLastName: "",
     InputPhone: "",
-    InputAltEmail: ""
+    InputAltEmail: "",
   });
   const [formDataUserPublic, setFormDataUserPublic] = useState({
     InputNickName: "",
-    InputCountry: ""
+    InputCountry: "",
   });
   const fetchUserData = async () => {
     try {
@@ -81,7 +91,7 @@ function App() {
           InputFirstName: userData.scsemppri_first_name,
           InputLastName: userData.scsemppri_last_name,
           InputPhone: userData.scsemppri_phone,
-          InputAltEmail: userData.scsemppri_alt_email
+          InputAltEmail: userData.scsemppri_alt_email,
         });
       }
     } catch (error) {
@@ -99,7 +109,7 @@ function App() {
         setFormDataUserPublic({
           InputUserId: userDataPublic.scsemppri_id,
           InputNickName: userDataPublic.scsemppub_nickname,
-          InputCountry: userDataPublic.scsemppub_countrycode
+          InputCountry: userDataPublic.scsemppub_countrycode,
         });
       }
     } catch (error) {
@@ -116,16 +126,28 @@ function App() {
   };
 
   return (
-<div className="App" class="p-3 mb-2 bg-dark text-dark">
-<div class="container mt-5">
-<div class="row">
-   
-        <Upload_Profile_Private initialUserData={initialUserData} />
-        <Upload_Profile_Public  initialUserData={initialUserData} />
-        <Upload />
-    </div>      
+ 
+    <div class="row">
+    <div class="col-sm-8 px-0 d-none d-sm-block" style={{background: "rgba(3, 4, 7, 0.80); border-top-left-radius: 20px; border-top-right-radius: 20px"}}> 
+    <video className='videoTag video-background' style={{color: "red"}} autoPlay loop muted>
+    <source src={vedeio1} type='video/mp4' />
+</video>
+      </div>
+      <div class="col-sm-4 text-white">
+        <div class="">
+
+        <Router>
+        <Routes>
+          <Route path="/" element={<Login />}/>
+
+        </Routes>
+      </Router>
+
         </div>
-        </div>
+
+      </div>
+
+    </div>
   );
 }
 

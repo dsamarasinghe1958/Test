@@ -6,7 +6,9 @@ import fileUpload from "express-fileupload";
 import fs from "fs";
 import path from "path";
 import random from "random";
-
+//------------
+import multer from "multer";
+//----------------
 // Create the Express app
 const app = express();
 app.use(cors());
@@ -45,7 +47,44 @@ const executeQuery = async (query, params) => {
   }
 };
 
+//-----------------------
+//! Use of Multer
+var storage = multer.diskStorage({
+  destination: (req, file, callBack) => {
+      callBack(null, './uploads/')     // './uploads/' directory name where save the file
+  },
+  filename: (req, file, callBack) => {
+      callBack(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+  }
+})
 
+var upload = multer({
+  storage: storage
+});
+//! Routes start
+
+//route for Home page
+app.get('/', (req, res) => {
+  //res.sendFile(__dirname + '/index.html');
+});
+
+//@type   POST
+//route for post data
+app.post("/uploading", upload.single('image'), (req, res) => {
+    if (!req.file) {
+        console.log("No file upload");
+    } else {
+        console.log(req.file.filename)
+        var imgsrc = 'http://127.0.0.1:3000/uploads/' + req.file.filename
+        var insertData = "INSERT INTO users_file(file_src)VALUES(?)"
+        db.query(insertData, [imgsrc], (err, result) => {
+            if (err) throw err
+            console.log("file uploaded")
+  res.send('Image Has been uploaded, please check your directory and mysql database....');
+        })
+    }
+});
+//--------------------------
 
 const updateUser = async (formData) => {
 const { InputFirstName, InputLastName, InputPhone, InputAltEmail, InputUserId } = formData;
@@ -130,10 +169,28 @@ app.post("/userPostPrivate", async (req, res) => {
 // POST request for '/userPostPublic'
 app.post("/userPostPublic", async (req, res) => {
   try {
-   const { InputNickName, InputCountry } = req.body;
+
+   const { InputNickName, InputCountry ,InputProfilePic} = req.body;
    console.log("--sqluserPostPublic--");
    console.log(req.body);
-    const userId = req.body.InputUserId; // Assuming you're passing the user ID for the WHERE condition  
+   const userId = req.body.InputUserId; // Assuming you're passing the user ID for the WHERE condition  
+   
+
+    //----------------
+    console.log("--imgsrc--");
+    console.log(req.body.InputProfilePic);
+    var imgsrc = 'http://127.0.0.1:3000/uploads/' + req.body.InputProfilePic
+
+    var insertData = "UPDATE csem_profile_public SET scsemppri_picture = ? WHERE scsemppri_id = ?"
+    await executeQuery(insertData, [imgsrc, userId], (err, result) => {
+        if (err) throw err
+        console.log("file uploaded")
+res.send('Image Has been uploaded, please check your directory and mysql database....');
+    })
+
+  //-------------
+
+
     await executeQuery("UPDATE csem_profile_public SET scsemppub_nickname = ?, scsemppub_countrycode = ? WHERE scsemppri_id = ?",
   [InputNickName, InputCountry, userId]
 );
@@ -191,8 +248,8 @@ app.post('/imgupload', (req, res) => {
    
     const num= random.int(10000,999999);
   
-     let uploadDir = path.join(__dirname, '../backend','public','upload', num+targetFile.name);
-     let newuploadDir = path.join(__dirname, '../backend','public','upload', num+newimgFile.name);
+     //let uploadDir = path.join(__dirname, '../backend','public','upload', num+targetFile.name);
+     //let newuploadDir = path.join(__dirname, '../backend','public','upload', num+newimgFile.name);
 
     let imgList = ['.png','.jpg','.jpeg'];
     // Checking the file type
@@ -278,7 +335,7 @@ app.post("/uploadtest", (req, res) => {
   const userId = req.body.userId
   const base64Data = data.replace(/^data:image\/png;base64,/, '');
   const fileName = `profile_photo_${userId}_${Date.now()}.png`
-  const filePath = path.join(__dirname, 'uploads', fileName);
+  //const filePath = path.join(__dirname, 'uploads', fileName);
 
   fs.writeFile(filePath, base64Data, 'base64', (err) => {
     if (err) {

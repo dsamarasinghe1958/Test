@@ -27,40 +27,7 @@
     -->
     <title>React App</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
-    <script>
-      function fileValidation() {
-          var fileInput = 
-              document.getElementById('file');
-           
-          var filePath = fileInput.value;
-       
-          // Allowing file type
-          var allowedExtensions = 
-                  /(\.jpg|\.jpeg|\.png|\.gif)$/i;
-           
-          if (!allowedExtensions.exec(filePath)) {
-              alert('Invalid file type');
-              fileInput.value = '';
-              return false;
-          } 
-          else 
-          {
-           
-              // Image preview
-              if (fileInput.files && fileInput.files[0]) {
-                  var reader = new FileReader();
-                  reader.onload = function(e) {
-                      document.getElementById(
-                          'imagePreview').innerHTML = 
-                          '<img src="' + e.target.result
-                          + '"/>';
-                  };
-                   
-                  reader.readAsDataURL(fileInput.files[0]);
-              }
-          }
-      }
-  </script>
+ 
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
