@@ -51,15 +51,13 @@ function Login (){
     }, [])
 
     return(
-        <div className="App" class="bg-dark">
+    <div className="App" class="vh-100 bg-dark text-white">
     <form onSubmit={LoginHandler} className='container'>
-                    <h1 className='container'>Login</h1>
-                    <p id='err' className='d-flex'></p>
-                    <div className='mb-3 mt-3' dataValidate = "Username is reauired">
+                <div className='mb-3 mt-3' dataValidate = "Username is reauired">
                         <label for='email' className='form-label'>Username:</label>
                         <div className='input-group d-flex align-items-center'>
                             <FontAwesomeIcon icon={faUser} />
-                            <input 
+                            <input class="bg-dark text-white"
                                 type='email' 
                                 className='form-control' 
                                 id='username' 
@@ -70,7 +68,8 @@ function Login (){
                             />
                         </div>
                     </div>
-                    <div className='mb-3'>
+                           <div className='mb-3'>
+                    
                         <label htmlFor='password' className='form-label'>Password:</label>
                         <div className='input-group d-flex align-items-center'>
                             <FontAwesomeIcon icon={faLock} />

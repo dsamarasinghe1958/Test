@@ -1,86 +1,39 @@
 import "./App.css";
 import axios from "axios";
-import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
-import Upload_Profile_Private from "./Components/Upload_Profile_Private";
-import Upload_Profile_Public from "./Components/Upload_Profile_Public";
-import ReactNotification from "react-notifications-component";
-import "react-notifications-component/dist/theme.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Countries from "./Countries";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import vedeio1 from './assets/videos/204306-923909642_small.mp4';
+//import Upload from './local-upload/Upload'
 import Login from './page/Login';
-//import Register from './Page/Register';
-//import PersonalInfo from './Page/PersonalInfo';
-//import Profile from './Profile';
-const URL = "http://localhost:3001";
+//import Upload_Profile_Public from './local-upload/Upload_Profile_Public'
+//import Upload_Profile_Private from './local-upload/Upload_Profile_Private'
+import video from './assets/videos/204306-923909642_small.mp4';
+const URL = "http://localhost:3000";
+
 function App() {
   const [data, setData] = useState([]);
   const [inputValue, setInputValue] = useState("");
-  const [initialUserData, setInitialUserData] = useState([]);
-  const [initialPublicUserData, setInitialPublicUserData] = useState([]);
-  useEffect(() => {
-    fetchData();
-  }, []);
-  useEffect(() => {
-    fetchDataPublic();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const response = await axios.get(URL + "/userGetPrivate");
-      setInitialUserData(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const fetchDataPublic = async () => {
-    try {
-      const response = await axios.get(URL + "/userGetPublic");
-      setInitialPublicUserData(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const [countries, setCountries] = useState([]);  
   const handleChange = (e) => {
     setInputValue(e.target.value);
   };
 
-  const postData = async () => {
-    try {
-      const response = await axios.post(URL + "/userPostPrivate", {
-        data: inputValue,
-      });
-      console.log(response.data);
-      fetchData(); // Fetch data again after posting
-    } catch (error) {
-      console.error(error);
-    }
+  const [selectedUser, setSelectedUser] = useState(null); // ---1
+ 
+  useEffect(() => {
+    fetchUserData();//---2
+  }, []);
+  useEffect(() => {
+    fetchCountryData();
+  }, []);
+  const handleUserSelect = (userId) => {
+    const user = data.find((user) => user.id === userId);//---4
+    setSelectedUser(user);
   };
-  const postPublicData = async () => {
-    try {
-      const response = await axios.post(URL + "/userPostPublic", {
-        data: inputValue,
-      });
-      console.log(response.data);
-      fetchDataPublic(); // Fetch data again after posting
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  const [formData, setFormData] = useState({
-    InputFirstName: "",
-    InputLastName: "",
-    InputPhone: "",
-    InputAltEmail: "",
-  });
-  const [formDataUserPublic, setFormDataUserPublic] = useState({
-    InputNickName: "",
-    InputCountry: "",
-  });
   const fetchUserData = async () => {
     try {
-      const response = await axios.get(URL + "/userGetPrivate");
+      const response = await axios.get(URL + "/user");
       setData(response.data);
       // Assign fetched data to form fields
       if (response.data.length > 0) {
@@ -91,64 +44,55 @@ function App() {
           InputFirstName: userData.scsemppri_first_name,
           InputLastName: userData.scsemppri_last_name,
           InputPhone: userData.scsemppri_phone,
-          InputAltEmail: userData.scsemppri_alt_email,
+          InputAltEmail: userData.scsemppri_alt_email
         });
       }
     } catch (error) {
       console.error(error);
     }
   };
-  const fetchPublicUserData = async () => {
+  
+  const fetchCountryData = async () => {
     try {
-      const response = await axios.get(URL + "/userGetPublic");
-      setData(response.data);
-      // Assign fetched data to form fields
-      if (response.data.length > 0) {
-        const userDataPublic = response.data[0]; // Assuming only one user is fetched
-        console.log(userDataPublic);
-        setFormDataUserPublic({
-          InputUserId: userDataPublic.scsemppri_id,
-          InputNickName: userDataPublic.scsemppub_nickname,
-          InputCountry: userDataPublic.scsemppub_countrycode,
-        });
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  const tbinit = async () => {
-    try {
-      const response = await axios.post(URL + "/tbinit");
+      const response = await axios.get(URL + "/country");
       console.log(response.data);
+      setData(response.data);
     } catch (error) {
       console.error(error);
     }
   };
-
+  const [formData, setFormData] = useState({
+    InputFirstName: "",
+    InputLastName: "",
+    InputPhone: "",
+    InputAltEmail: ""
+  });
   return (
- 
-    <div class="row">
-    <div class="col-sm-8 px-0 d-none d-sm-block" style={{background: "rgba(3, 4, 7, 0.80); border-top-left-radius: 20px; border-top-right-radius: 20px"}}> 
-    <video className='videoTag video-background' style={{color: "red"}} autoPlay loop muted>
-    <source src={vedeio1} type='video/mp4' />
-</video>
-      </div>
-      <div class="col-sm-4 text-white">
-        <div class="">
 
-        <Router>
+<div className="App" class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6 col-md-7 mh-100 intro-content-wrapper border border-2">
+
+<video className='videoTag' autoPlay loop muted>
+    <source src={video} type='video/mp4' />
+</video> 
+
+        </div>
+        <div class="col-sm-6 col-md-5 form- bg-dark">
+  
+          <Router>
         <Routes>
           <Route path="/" element={<Login />}/>
 
         </Routes>
       </Router>
-
+           
         </div>
-
       </div>
-
     </div>
+
   );
 }
 
 export default App;
+
